@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Books;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\BooksResource;
 
 class BooksController extends Controller
 {
@@ -12,7 +14,7 @@ class BooksController extends Controller
      */
     public function index()
     {
-        //
+        return view('books.index');
     }
 
     /**
@@ -28,7 +30,35 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data_json = $request->json()->all();
+
+        $validator = Validator::make($data_json, [
+            'title' => 'required|min:3|string',
+            'image' => 'required',
+            'author_id' => 'required',
+            'category_id' => 'required',
+            'description' => 'required|min:10|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'All fields is mandatory',
+                'error' => $validator->messages()
+            ], 422);
+        }
+
+        $data = Books::create([
+            'title' => $data_json['title'],
+            'author_id' => $data_json['author_id'],
+            'image' => $data_json['image'],
+            'description' => $data_json['description'],
+            'category_id' => $data_json['category_id'],
+        ]);
+
+        return response()->json([
+            'message' => 'Data added succesfuly',
+            'data' => new BooksResource($data),
+        ], 200);
     }
 
     /**
