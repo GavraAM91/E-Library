@@ -20,6 +20,17 @@ class Books extends Model
         'category'
     ];
 
+
+    //automatic create slug
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'title'
+            ]
+        ];
+    }
+
     //make automatation for slug
     // public function sluggable(): array {
     //     return 

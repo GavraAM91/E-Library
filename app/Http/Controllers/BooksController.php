@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Books;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\BooksResource;
+use Illuminate\Support\Facades\Validator;
+
 
 class BooksController extends Controller
 {
@@ -14,7 +18,27 @@ class BooksController extends Controller
      */
     public function index()
     {
-        return view('books.index');
+        //get all data from database books
+        $books = Books::all();
+
+        if (request()->wantsJson()) {
+            if ($books->isEmpty()) {
+                return response()->json([
+                    'message' => 'Data kosong'
+                ], 200);
+            }
+
+            return response()->json([
+                'data' => $books,
+            ], 200);
+        }
+        //view to index
+        return view(
+            'books.index',
+            [
+                'books' => $books,
+            ]
+        );
     }
 
     /**
@@ -22,7 +46,7 @@ class BooksController extends Controller
      */
     public function create()
     {
-        //
+        return view('books.form');
     }
 
     /**
@@ -30,15 +54,17 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        $data_json = $request->json()->all();
+        // $data_json = $request->json()->all();
+        $data_json = json_decode($request, true);
 
         $validator = Validator::make($data_json, [
             'title' => 'required|min:3|string',
-            'image' => 'required',
+            'image' => 'required|mimes:jpg,png,jpeg,gif,svg',
             'author_id' => 'required',
             'category_id' => 'required',
             'description' => 'required|min:10|string'
         ]);
+
 
         if ($validator->fails()) {
             return response()->json([
@@ -47,12 +73,16 @@ class BooksController extends Controller
             ], 422);
         }
 
+        //get id creator
+        $authId = Auth::id();
+
         $data = Books::create([
             'title' => $data_json['title'],
-            'author_id' => $data_json['author_id'],
-            'image' => $data_json['image'],
+            'author_id' => $authId,
+            'image' => null,
             'description' => $data_json['description'],
             'category_id' => $data_json['category_id'],
+            'slug' =>  Str::slug($request->title),
         ]);
 
         return response()->json([
