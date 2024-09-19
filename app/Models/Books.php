@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class Books extends Model
@@ -13,11 +15,11 @@ class Books extends Model
     use HasFactory;
 
     protected $fillable = [
-        'author_id',
+        'user_id ',
         'title',
         'description',
         'slug',
-        'category'
+        'category_id'
     ];
 
 
@@ -42,8 +44,8 @@ class Books extends Model
         return $this->belongsTo(Category::class);
     }
     //connect to author
-    public function Author(): BelongsTo
+    public function User(): BelongsTo
     {
-        return $this->belongsTo(Author::class);
+        return $this->belongsTo(related: User::class);
     }
 }

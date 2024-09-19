@@ -55,12 +55,11 @@ class BooksController extends Controller
     public function store(Request $request)
     {
         // $data_json = $request->json()->all();
-        $data_json = json_decode($request, true);
+        // $data_json = json_decode($request, true);
+        $data_json = $request->all();
 
         $validator = Validator::make($data_json, [
             'title' => 'required|min:3|string',
-            'image' => 'required|mimes:jpg,png,jpeg,gif,svg',
-            'author_id' => 'required',
             'category_id' => 'required',
             'description' => 'required|min:10|string'
         ]);
@@ -68,6 +67,7 @@ class BooksController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
+                'status' => 0,
                 'message' => 'All fields is mandatory',
                 'error' => $validator->messages()
             ], 422);
@@ -78,7 +78,7 @@ class BooksController extends Controller
 
         $data = Books::create([
             'title' => $data_json['title'],
-            'author_id' => $authId,
+            'user_id' => $authId,
             'image' => null,
             'description' => $data_json['description'],
             'category_id' => $data_json['category_id'],
@@ -86,6 +86,7 @@ class BooksController extends Controller
         ]);
 
         return response()->json([
+            'status' => 1,
             'message' => 'Data added succesfuly',
             'data' => new BooksResource($data),
         ], 200);

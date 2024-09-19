@@ -13,15 +13,18 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->string('title');
             $table->text('description');
-            $table->string('slug')->unique();
-            $table->foreignId('author_id')->constrained(
-                table: 'authors',
-                indexName: 'books_author_id',
+            $table->string(column: 'slug')->unique();
+            $table->foreignId(column: 'user_id')->constrained(
+                table: 'users',
+                indexName: 'books_users_id',
             );
-            $table->string('category');
+            $table->foreignId(column: 'category_id')->constrained(
+                table: 'categories',
+                indexName: 'books_category_id',
+            );
             $table->timestamps();
         });
     }

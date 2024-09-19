@@ -59,7 +59,7 @@
                                                 {{ $book->description }}
                                             </td>
                                             <td class="px-6 py-4">
-                                                {{ $book->category }}
+                                                {{ $book->category['name'] }}
                                             </td>
                                             <td class="px-6 py-4">
                                                 {{ $book->created_date }}

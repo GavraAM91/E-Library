@@ -13,6 +13,6 @@ class Category extends Model
 
     public function Books(): HasMany
     {
-        return $this->hasMany(related: Books::class);
+        return $this->hasMany(Books::class, foreignKey: 'category_id');
     }
 }
