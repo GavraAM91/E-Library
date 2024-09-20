@@ -54,9 +54,8 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        // $data_json = $request->json()->all();
-        // $data_json = json_decode($request, true);
         $data_json = $request->all();
+        // var_dump($data_json);
 
         $validator = Validator::make($data_json, [
             'title' => 'required|min:3|string',
@@ -88,8 +87,8 @@ class BooksController extends Controller
         return response()->json([
             'status' => 1,
             'message' => 'Data added succesfuly',
-            'data' => new BooksResource($data),
-        ], 200);
+            'data' => $data,
+        ], 200)->view("books.index");
     }
 
     /**
